@@ -1,3 +1,4 @@
 # project-5-cs180
 
-[[images/AirportManager.png]]
+![Plot map](/images/AirportManager.png)
+Format: ![Alt Text](url)
