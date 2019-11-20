@@ -25,7 +25,7 @@ public class Gate implements Serializable {
         terminalGate = rand.nextInt(19);
     }
 
-    public String getGate() {
+    public String toString() {
         return this.terminal + this.terminalGate;
     }
 }

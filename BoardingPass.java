@@ -10,6 +10,7 @@ public class BoardingPass implements Serializable {
     }
 
     public String toString() {
-        return String.format("First name");
+        return String.format("BoardingPass[%s, %s, %s, %d, %s]", this.airline.getName(), this.passenger.getFirstName(),
+            this.passenger.getLastName(), this.passenger.getAge(), this.airline.getGate());
     }
 }

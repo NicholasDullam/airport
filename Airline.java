@@ -28,8 +28,18 @@ public abstract class Airline implements Serializable {
         return this.capacity;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getCapacityLeft() {
+        for (int i = 0; i < passengers.length; i++) {
+            if (passengers[i] == null) {
+                return passengers.length - i;
+            }
+        }
+
+        return 0;
+    }
+
+    public int getFlightNumber() {
+        return this.flightNumber;
     }
 
     public void setGate(Gate gate) {
