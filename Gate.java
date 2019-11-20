@@ -1,6 +1,15 @@
 import java.io.Serializable;
 import java.util.Random;
 
+/**
+ *  Project 5 - Airport Manager
+ *
+ *  @author Nicholas Dullam ndullam
+ *
+ *  @version 11-20-19
+ *
+ */
+
 public class Gate implements Serializable {
 
     String[] terminals = {"A", "B", "C"};

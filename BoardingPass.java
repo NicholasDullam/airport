@@ -1,5 +1,14 @@
 import java.io.Serializable;
 
+/**
+ *  Project 5 - Airport Manager
+ *
+ *  @author Nicholas Dullam ndullam
+ *
+ *  @version 11-20-19
+ *
+ */
+
 public class BoardingPass implements Serializable {
     private Passenger passenger;
     private Airline airline;
