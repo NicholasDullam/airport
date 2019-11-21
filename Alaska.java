@@ -8,7 +8,7 @@
  */
 
 public class Alaska extends Airline {
-    public Alaska(int capacity) {
+    public Alaska() {
         super("Alaska", 100);
     }
 }

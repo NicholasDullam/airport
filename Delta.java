@@ -8,7 +8,7 @@
  */
 
 public class Delta extends Airline {
-    public Delta(int capacity) {
+    public Delta() {
         super("Delta", 200);
     }
 }
