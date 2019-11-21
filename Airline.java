@@ -37,6 +37,10 @@ public abstract class Airline implements Serializable {
         return this.capacity;
     }
 
+    public Passenger[] getPassengers() {
+        return this.passengers;
+    }
+
     public int getCapacityLeft() {
         for (int i = 0; i < passengers.length; i++) {
             if (passengers[i] == null) {

@@ -3,7 +3,8 @@ import java.io.*;
 
 public class ReservationServer {
 
-    private ServerSocket socket;
+    private static ServerSocket socket;
+    private static Airline[] airlines;
 
     public ReservationServer() throws IOException {
         socket = new ServerSocket(0);
@@ -23,6 +24,24 @@ public class ReservationServer {
             handlerThread = new Thread(new Handler(clientSocket));
             handlerThread.start();
         }
+    }
+
+    public int getCapacityLeft(Airline airline) {
+        return airline.getCapacityLeft();
+    }
+
+    public Passenger[] getPassengers(Airline airline) {
+        return airline.getPassengers();
+    }
+
+    public Airline getAirline(String name) {
+        for (Airline airline : airlines) {
+            if (airline.getName().toUpperCase().equals(name)) {
+                return airline;
+            }
+        }
+
+        return null;
     }
 
     private class Handler extends Thread {
