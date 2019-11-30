@@ -2,15 +2,13 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-public class ReservationClient extends JFrame{
+public class ReservationClient extends JFrame {
 
     public static void main(String[] args) {
 
@@ -22,27 +20,27 @@ public class ReservationClient extends JFrame{
                 String thisAirline = "";
 
 
-                while(hostName.equals("")) {
+                /*while (hostName.equals("")) {
                     hostName = inputHostName();
                     if (hostName.equals(JOptionPane.CANCEL_OPTION)) {
                         System.exit(0);
                     }
                 }
                 System.out.println(hostName);
-                while(portNum.equals("")) {
+                while (portNum.equals("")) {
                     portNum = inputPortNum();
                     if (portNum.equals(JOptionPane.CANCEL_OPTION)) {
                         System.exit(0);
                     }
-                }
-                welcome();
-                //flightChoice();
-                //bookFlight();
-            //flightChoice();
+                }*/
+                //welcome();
+                flightChoice();
+
             }
         });
 
     }
+
     private static String inputHostName() {
         return JOptionPane.showInputDialog(null,
                 "What is the hostname you'd like to connect to?", "Hostname?",
@@ -60,7 +58,7 @@ public class ReservationClient extends JFrame{
         JPanel panel = new JPanel();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        frame.setSize(600,400);
+        frame.setSize(600, 400);
         frame.setVisible(true);
 
 
@@ -79,9 +77,10 @@ public class ReservationClient extends JFrame{
         panel.add(bookFlightButton);
         frame.add(panel, BorderLayout.SOUTH);
 
-        String text = "Welcome to the Purdue University Airline Reservation Management System!";
+        String text = "<html><div style='text-align: center;'>Welcome to the Purdue University Airline Reservation " +
+                "Management System!</div></html>";
 
-        JLabel text1 = new JLabel("<html><div style='text-align: center;'>" + text + "</div></html>");
+        JLabel text1 = new JLabel(text);
         text1.setFont(font1);
         JPanel welcomeText = new JPanel();
         welcomeText.add(text1);
@@ -95,7 +94,7 @@ public class ReservationClient extends JFrame{
         JPanel panel = new JPanel();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        frame.setSize(600,400);
+        frame.setSize(600, 400);
         frame.setVisible(true);
 
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
@@ -125,10 +124,10 @@ public class ReservationClient extends JFrame{
     public static void flightChoice() {
         JFrame frame = new JFrame("Purdue University Flight Reservation System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.setLayout(new BorderLayout(100,100));
-        frame.setSize(600,400);
+        frame.setSize(600, 400);
         frame.setVisible(true);
-        int airlineChoice;
+        final String airlineChoice = "";
+        String[] airlines = {"Alaska", "Delta", "Southwest"};
 
         JPanel chooseText = new JPanel();
         JPanel airlineText = new JPanel();
@@ -140,66 +139,118 @@ public class ReservationClient extends JFrame{
         text1.setFont(font1);
         chooseText.add(text1, BorderLayout.NORTH);
 
+        JButton listenerButton = new JButton();
+        listenerButton.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
+                    System.out.println("Enter has been pressed!");
+                }
+            }
+        });
+
         JComboBox<String> comboBox = new JComboBox();
         comboBox.addItem("Alaska");
         comboBox.addItem("Delta");
         comboBox.addItem("Southwest");
+        comboBox.addItemListener(listener -> {
+            String choice;
+            JComboBox getSelection = (JComboBox) listener.getSource();
+            choice = (String) getSelection.getSelectedItem();
+            //System.out.println(choice);
+            airlineChoice.replaceAll("", choice);
+            System.out.println(airlineChoice);
 
+        });
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
             System.exit(0);
         });
 
         JButton chooseButton = new JButton("Choose this flight");
-
         chooseButton.addActionListener(e -> {
-            //airlineChoice = comboBox.getSelectedIndex();
-
+            int choice = comboBox.getSelectedIndex();
+            frame.setVisible(false);
+            confirmAirline(airlines[choice]);
         });
 
-        JLabel textBox = new JLabel("test");
-
-        comboBox.addItemListener(e-> {
+        String alaskanText = "<html>Alaskan Airlines is proud to serve the strong and knowledgeable Boilermakers " +
+                "from Purdue University.<br>" +
+                " We primarily fly westward, and often have stops in Alaska and " +
+                "California.<br>We have first class amenities, even in coach class.<br>We provide fun snacks, " +
+                "such as pretzels and goldfish.<br>We also have comfortable seats, and free WiFi.<br>We hope " +
+                "you choose Alaska Airlines for your next itinerary!</html>";
+        JLabel textBox = new JLabel(alaskanText);
+        textBox.setPreferredSize(new Dimension(500, 300));
+        comboBox.addItemListener(e -> {
             int selectedIndex = comboBox.getSelectedIndex();
-            System.out.println("here");
             switch (selectedIndex) {
-            case 0 :
-                textBox.setText("Alaskan Airlines is proud to serve the strong and knoledgable Boilermakers from " +
-                        "Purdue University.\n We primarily fly westward, and often have stops in Alaska and " +
-                        "California.\nWe have first class amenities, even in coach class.\nWe provide fun snacks, " +
-                        "such as pretzels and goldfish.\nWe also have comfortable seats, and free WiFi.\nWe hope " +
-                        "you choose Alaska Airlines for your next itinerary!");
-                break;
-            case 1 :
-                textBox.setText("Delta Airlines is proud to be one of the five premier Airlines at Purdue University" +
-                        ". \nWe are extremely exceptional services, with free limited WiFi for all customers.\n" +
-                        "Passengers who use T-Mobile as a cell phone carrier get additional benefits.\n We are also" +
-                        "happy to offer power outlets in each seat for passenger use. We hope you choose to fly Delta" +
-                        "as your next Airline.");
-                break;
-            case 2 :
-                textBox.setText("Southwest Airlines is proud to offer flights to Purdue University.\n We are happy " +
-                        "to offer free in flight WiFi, as well as our amazing snacks.\n In addition, we offer flights" +
-                        "for much cheaper than other airlines, and offer two free checked bags.\nWe hope you choose " +
-                        "Southwest for your next flight.");
-                //panel.add(textBox);
-        }
+                case 0:
+                    textBox.setText(alaskanText);
+
+                    break;
+                case 1:
+                    textBox.setText("<html>Delta Airlines is proud to be one of the five premier Airlines at Purdue University" +
+                            ". <br>We are extremely exceptional services, with free limited WiFi for all customers.<br>" +
+                            "Passengers who use T-Mobile as a cell phone carrier get additional benefits.<br> We are also" +
+                            "happy to offer power outlets in each seat for passenger use. We hope you choose to fly Delta" +
+                            "as your next Airline.</html>");
+                    break;
+                case 2:
+                    textBox.setText("<html>Southwest Airlines is proud to offer flights to Purdue University.<br> We are happy " +
+                            "to offer free in flight WiFi, as well as our amazing snacks.<br> In addition, we offer flights" +
+                            "for much cheaper than other airlines, and offer two free checked bags.<br>We hope you choose " +
+                            "Southwest for your next flight.</html>");
+            }
+
+
         });
 
         airlineText.add(textBox);
-        //airlineText.add(comboBox);
         chooseText.add(comboBox, BorderLayout.SOUTH);
         panel.add(exitButton);
         panel.add(chooseButton);
-
-
+        frame.add(listenerButton);
         frame.add(chooseText, BorderLayout.NORTH);
-        //frame.add(comboBox, BorderLayout.NORTH);
         frame.add(airlineText, BorderLayout.CENTER);
         frame.add(panel, BorderLayout.SOUTH);
 
     }
 
+    public static void confirmAirline(String airline) {
+        JFrame frame = new JFrame("Purdue University Flight Reservation System");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 400);
+        frame.setVisible(true);
+
+        Font font1 = new Font("SansSerif", Font.BOLD, 20);
+        String text = "<html>Are you sure that you want to book a flight on <br>" + airline + " Airlines?</html>";
+        JLabel text1 = new JLabel(text, SwingConstants.CENTER);
+        text1.setFont(font1);
+        frame.add(text1, BorderLayout.NORTH);
+
+        JButton exitButton = new JButton("Exit");
+        exitButton.addActionListener(e -> {
+            System.exit(0);
+        });
+        JButton yesButton = new JButton("Yes, I want this flight.");
+        yesButton.addActionListener(e -> {
+
+        });
+        JButton noButton = new JButton("No, I want a different flight.");
+        noButton.addActionListener(e -> {
+            frame.setVisible(false);
+            flightChoice();
+        });
+        JPanel panel = new JPanel();
+        panel.add(exitButton, BorderLayout.SOUTH);
+        panel.add(yesButton, BorderLayout.SOUTH);
+        panel.add(noButton, BorderLayout.SOUTH);
+        frame.add(panel, BorderLayout.SOUTH);
+    }
+
+    public void askInfo(){
+        
+    }
 
 
 }
