@@ -24,6 +24,8 @@ public class ReservationClient extends JFrame {
                 boolean auth = false;
                 Passenger x = new Passenger();
 
+
+                //welcome(x);
                 //edge-case adjustment for server auth
                 while (!auth) {
                     String hostName = "";
@@ -76,13 +78,19 @@ public class ReservationClient extends JFrame {
     }
 
     private static void welcome(Passenger x) {
-        // TODO: 11/30/2019 add image
         JFrame frame = new JFrame("Purdue University Flight Reservation System");
         JPanel panel = new JPanel();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.setSize(600, 400);
         frame.setVisible(true);
+
+        ImageIcon imageIcon = new ImageIcon("purdueP.png"); // load the image to a imageIcon
+        Image image = imageIcon.getImage(); // transform it
+        Image newimg = image.getScaledInstance(400, 260,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        imageIcon = new ImageIcon(newimg);  // transform it back
+        JLabel imagepa = new JLabel(imageIcon);
+        frame.add(imagepa);
 
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
 
@@ -159,7 +167,7 @@ public class ReservationClient extends JFrame {
         String text = "Choose a flight from the drop down menu.";
         JLabel text1 = new JLabel(text, SwingConstants.CENTER);
         text1.setFont(font1);
-        chooseText.add(text1, BorderLayout.NORTH);
+
 
         JComboBox<String> comboBox = new JComboBox();
         comboBox.addItem("Alaska");
@@ -170,21 +178,10 @@ public class ReservationClient extends JFrame {
         exitButton.addActionListener(e -> {
             System.exit(0);
         });
-        JButton listenerButton = new JButton();
-        listenerButton.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
-                    // TODO: 11/30/2019 fix listener work on 2nd try
-                    int choice = comboBox.getSelectedIndex();
-                    System.out.println("Enter has been pressed!");
-                    displayManifest(choice);
-                    System.out.println("Enter has been pressed!");
-                }
-            }
-        });
+
 
         //TODO: replace the new airline constructors with those from the server
-        JButton chooseButton = new JButton("Choose this flight");
+        JButton chooseButton = new JButton("<html><div style='text-align: center;'>Choose this flight</div></html>");
         chooseButton.addActionListener(e -> {
             int choice = comboBox.getSelectedIndex();
             switch (choice) {
@@ -203,12 +200,12 @@ public class ReservationClient extends JFrame {
             confirmAirline(x);
         });
 
-        String alaskanText = "<html>Alaskan Airlines is proud to serve the strong and knowledgeable Boilermakers " +
-                "from Purdue University.<br>" +
+        String alaskanText = "<html><div style='text-align: center;'>Alaskan Airlines is proud to serve the strong " +
+                "and <br>knowledgeable Boilermakers from Purdue University.<br>" +
                 " We primarily fly westward, and often have stops in Alaska and " +
                 "California.<br>We have first class amenities, even in coach class.<br>We provide fun snacks, " +
                 "such as pretzels and goldfish.<br>We also have comfortable seats, and free WiFi.<br>We hope " +
-                "you choose Alaska Airlines for your next itinerary!</html>";
+                "you choose Alaska Airlines for your next itinerary!</div></html>";
         JLabel textBox = new JLabel(alaskanText);
         textBox.setPreferredSize(new Dimension(500, 300));
         comboBox.addItemListener(e -> {
@@ -219,25 +216,48 @@ public class ReservationClient extends JFrame {
 
                     break;
                 case 1:
-                    textBox.setText("<html>Delta Airlines is proud to be one of the five premier Airlines at Purdue University" +
+                    textBox.setText("<html><div style='text-align: center;'>Delta Airlines is proud to be one of the five premier Airlines at Purdue University" +
                             ". <br>We are extremely exceptional services, with free limited WiFi for all customers.<br>" +
                             "Passengers who use T-Mobile as a cell phone carrier get additional benefits.<br> We are also" +
                             "happy to offer power outlets in each seat for passenger use. We hope you choose to fly Delta" +
-                            "as your next Airline.</html>");
+                            "as your next Airline.</div></html>");
                     break;
                 case 2:
-                    textBox.setText("<html>Southwest Airlines is proud to offer flights to Purdue University.<br> We are happy " +
+                    textBox.setText("<html><div style='text-align: center;'>Southwest Airlines is proud to offer flights to Purdue University.<br> We are happy " +
                             "to offer free in flight WiFi, as well as our amazing snacks.<br> In addition, we offer flights" +
                             "for much cheaper than other airlines, and offer two free checked bags.<br>We hope you choose " +
-                            "Southwest for your next flight.</html>");
+                            "Southwest for your next flight.</div></html>");
             }
         });
 
-        airlineText.add(textBox);
-        chooseText.add(comboBox, BorderLayout.SOUTH);
+        JTextField paneledTextField = new JTextField(0);
+        paneledTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
+                    System.out.println("here");
+                    displayManifest(comboBox.getSelectedIndex());
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
+        chooseText.add(text1, BorderLayout.NORTH);
+        //chooseText.add(comboBox, BorderLayout.SOUTH);
+        airlineText.add(comboBox, BorderLayout.NORTH);
+        airlineText.add(textBox, BorderLayout.SOUTH);
         panel.add(exitButton);
         panel.add(chooseButton);
-        frame.add(listenerButton);
+        frame.add(paneledTextField);
         frame.add(chooseText, BorderLayout.NORTH);
         frame.add(airlineText, BorderLayout.CENTER);
         frame.add(panel, BorderLayout.SOUTH);
@@ -251,8 +271,8 @@ public class ReservationClient extends JFrame {
         frame.setVisible(true);
 
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
-        String text = "<html>Are you sure that you want to book a flight on <br>" + x.getBoardingPass().getAirlineString()
-                + " Airlines?</html>";
+        String text = "<html><div style='text-align: center;'>Are you sure that you want to book a flight on <br>" + x.getBoardingPass().getAirlineString()
+                + " Airlines?</div></html>";
         JLabel text1 = new JLabel(text, SwingConstants.CENTER);
         text1.setFont(font1);
         frame.add(text1, BorderLayout.NORTH);
@@ -296,13 +316,13 @@ public class ReservationClient extends JFrame {
         text1.setFont(font1);
         frame.add(text1, BorderLayout.NORTH);
 
-        JLabel text2 = new JLabel("What is your first name?");
+        JLabel text2 = new JLabel("What is your first name?", SwingConstants.LEFT);
         text2.setFont(font2);
 
-        JLabel text3 = new JLabel("What is your last name?");
+        JLabel text3 = new JLabel("What is your last name?", SwingConstants.LEFT);
         text3.setFont(font2);
 
-        JLabel text4 = new JLabel("What is your age?");
+        JLabel text4 = new JLabel("What is your age?", SwingConstants.LEFT);
         text4.setFont(font2);
 
         JTextArea textFieldFN = new JTextArea(4, 50);
@@ -312,7 +332,8 @@ public class ReservationClient extends JFrame {
         JButton nextButton = new JButton("Next");
         nextButton.addActionListener(e -> {
             if (textFieldFN.getText().equals("") || textFieldLN.getText().equals("") || textFieldAGE.getText().equals("")) {
-                JOptionPane.showConfirmDialog(null, "Please fill out all required fields then press \"Next\" to continue", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Please fill out all required fields " +
+                        "then press \"Next\" to continue", "ERROR", JOptionPane.ERROR_MESSAGE);
             } else {
                 if (!confirmInfo(textFieldFN.getText(), textFieldLN.getText(), textFieldAGE.getText())) {
 
@@ -428,8 +449,8 @@ public class ReservationClient extends JFrame {
                 break;
             }
             String textFill = "<html>" + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
-                passenger.getLastName().toUpperCase() + ", " +
-                passenger.getAge() + "</html>";
+                    passenger.getLastName().toUpperCase() + ", " +
+                    passenger.getAge() + "</html>";
             JLabel readFromServer = new JLabel(textFill);
             scrollPanel.add(readFromServer);
         }
@@ -502,8 +523,8 @@ public class ReservationClient extends JFrame {
                 break;
             }
             String textFill = "<html>" + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
-                passenger.getLastName().toUpperCase() + ", " +
-                passenger.getAge() + "</html>";
+                    passenger.getLastName().toUpperCase() + ", " +
+                    passenger.getAge() + "</html>";
             JLabel readFromServer = new JLabel(textFill);
             scrollPanel.add(readFromServer);
         }
