@@ -13,12 +13,18 @@ public class Passenger implements Serializable {
     private String firstName;
     private String lastName;
     private BoardingPass boardingPass;
-    private int age;
+    private String age;
 
-    public Passenger(String firstName, String lastName, int age) {
+    public Passenger(String firstName, String lastName, String age) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
+    }
+
+    public Passenger() {
+        this.firstName = "";
+        this.lastName = "";
+        this.age = "";
     }
 
     public String getFirstName() {
@@ -29,11 +35,41 @@ public class Passenger implements Serializable {
         return this.lastName;
     }
 
-    public int getAge() {
+    public String getAge() {
         return this.age;
     }
 
-    public void setBoardingPass(Airline airline) {
+    public BoardingPass getBoardingPass() {
+        return boardingPass;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    /*public void setBoardingPass(Airline airline) {
         this.boardingPass = new BoardingPass(this, airline);
+    }*/
+
+    public void setBoardingPass(BoardingPass boardingPass) {
+        this.boardingPass = boardingPass;
+    }
+
+    @Override
+    public String toString() {
+        return "Passenger{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", boardingPass=" + boardingPass +
+                ", age=" + age +
+                '}';
     }
 }
