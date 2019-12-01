@@ -18,7 +18,6 @@ public class ReservationClient extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-
                 Passenger x = new Passenger();
                 String hostName = "";
                 String portNum = "";
@@ -139,16 +138,6 @@ public class ReservationClient extends JFrame {
         text1.setFont(font1);
         chooseText.add(text1, BorderLayout.NORTH);
 
-        JButton listenerButton = new JButton();
-        listenerButton.addKeyListener(new KeyAdapter() {
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
-                    // TODO: 11/30/2019 display flight manifest
-                    //System.out.println("Enter has been pressed!");
-                }
-            }
-        });
-
         JComboBox<String> comboBox = new JComboBox();
         comboBox.addItem("Alaska");
         comboBox.addItem("Delta");
@@ -157,6 +146,18 @@ public class ReservationClient extends JFrame {
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
             System.exit(0);
+        });
+        JButton listenerButton = new JButton();
+        listenerButton.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
+                    // TODO: 11/30/2019 fix listener work on 2nd try
+                    int choice = comboBox.getSelectedIndex();
+                    System.out.println("Enter has been pressed!");
+                    displayManifest(choice);
+                    System.out.println("Enter has been pressed!");
+                }
+            }
         });
 
         JButton chooseButton = new JButton("Choose this flight");
@@ -340,7 +341,6 @@ public class ReservationClient extends JFrame {
     }
 
     public static void flightData(Passenger x) {
-        System.out.println(x.toString());
         JFrame frame = new JFrame("Purdue University Flight Reservation System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(600, 400);
@@ -371,6 +371,13 @@ public class ReservationClient extends JFrame {
                 "PASSENGER AGE: " + x.getAge() + "<br>" +
                 "You can now begin boarding at gate A16<br>" +
                 "--------------------------------------------------------------------------------------------------------------------------------------</html>";
+        JLabel readFromServer = new JLabel("here");
+
+        JPanel scrollPanel = new JPanel();
+        scrollPanel.add(readFromServer);
+        JScrollPane jsp = new JScrollPane(scrollPanel);
+        frame.add(jsp, BorderLayout.CENTER);
+
         JLabel text4 = new JLabel(text3);
         text1.setFont(font1);
         panel.add(text4, BorderLayout.NORTH);
@@ -378,4 +385,36 @@ public class ReservationClient extends JFrame {
         panel.add(refreshButton, BorderLayout.SOUTH);
         frame.add(panel, BorderLayout.SOUTH);
 
+    }
+
+    public static void displayManifest(int choice) {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(300, 200);
+        frame.setVisible(true);
+        JPanel panel = new JPanel();
+
+        JButton exitButton = new JButton("Exit");
+        exitButton.addActionListener(e -> {
+            frame.setVisible(false);
+        });
+
+        String air = "";
+        Font font1 = new Font("SansSerif", Font.BOLD, 20);
+        switch (choice) {
+            case 0:
+                air = "Alaska";
+                break;
+            case 1:
+                air = "Delta";
+                break;
+            case 2:
+                air = "Southwest";
+                break;
+        }
+        String text = air + " Airlines.";
+        JLabel text1 = new JLabel(text);
+        text1.setFont(font1);
+        frame.add(text1, BorderLayout.NORTH);
+        frame.add(exitButton, BorderLayout.SOUTH);
     }
