@@ -1,34 +1,17 @@
 import java.net.*;
 import java.io.*;
+import java.util.*;
 
 public class ReservationServer {
 
     private static ServerSocket socket;
     private static Airline[] airlines = null;
-    private static ObjectOutputStream oos = null;
-    private static ObjectInputStream ois = null;
+    private static BufferedReader bfr = null;
+    private static PrintWriter pwr = null;
+    private static ArrayList<String> file = null;
 
     public ReservationServer() {
-        try {
-            ois = new ObjectInputStream(new FileInputStream("reservations.txt"));
-            airlines = (Airline[]) ois.readObject();
-        } catch (EOFException e) {
-            System.out.println("Reformatting reservations.txt");
-            airlines = new Airline[3];
-            airlines[0] = new Delta();
-            airlines[1] = new Alaska();
-            airlines[2] = new Southwest();
-            save();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (ois != null) ois.close();
-            } catch (Exception j) {
-                j.printStackTrace();
-            }
-        }
-
+        read();
         try {
             socket = new ServerSocket(0);
         } catch (Exception e) {
@@ -38,9 +21,91 @@ public class ReservationServer {
 
     public static void save() {
         try {
-            oos = new ObjectOutputStream(new FileOutputStream("reservations.txt"));
-            oos.writeObject(airlines);
-            oos.close();
+            pwr = new PrintWriter("reservations.txt");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for (Airline airline : airlines) {
+            pwr.print(airline.getName().toUpperCase() + "\n" +
+                (airline.getCapacity() - airline.getCapacityLeft()) + "/" + airline.getCapacity() + "\n" +
+                airline.getName() + " passenger list" + "\n" + "\n");
+            for (Passenger passenger : airline.getPassengers()) {
+                if (passenger == null) {
+                    break;
+                }
+                pwr.print(passenger.getFirstName().substring(0, 1).toUpperCase() + ". " + passenger.getLastName().toUpperCase() + ", " + passenger.getAge() +
+                    "\n-----------------" + airline.getName().toUpperCase() + "\n" + "\n");
+            }
+        }
+
+        pwr.print("EOF");
+
+        try {
+            pwr.flush();
+            pwr.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        read();
+    }
+
+    public static void read() {
+
+        airlines = new Airline[3];
+        airlines[0] = new Delta();
+        airlines[1] = new Alaska();
+        airlines[2] = new Southwest();
+
+        try {
+            bfr = new BufferedReader(new FileReader("reservations.txt"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ArrayList<String> file = new ArrayList<String>();
+        try {
+            String line = "";
+            while (true) {
+                line = bfr.readLine();
+                file.add(line);
+                if (line == null || line.equals("EOF")) {
+                    break;
+                }
+            }
+
+            String airline = "";
+            boolean passengers = false;
+            for (int i = 0; i < file.size(); i++) {
+                if (file.get(i) == null || file.get(i).equals("")) {
+                    continue;
+                }
+                if (file.get(i).equals("EOF")) {
+                    break;
+                }
+
+                if (file.get(i).equals("DELTA") || file.get(i).equals("SOUTHWEST") || file.get(i).equals("ALASKA")) {
+                    passengers = false;
+                    airline = file.get(i);
+                } else if (!airline.equals("") && file.get(i).contains("passenger list")) {
+                    passengers = true;
+                } else if (passengers == true && !(file.get(i).contains("DELTA") || file.get(i).contains("ALASKA") || file.get(i).contains("SOUTHWEST"))) {
+                    System.out.println(i);
+                    String[] query = file.get(i).split(" ");
+                    switch (airline) {
+                        case "DELTA" :
+                            airlines[0].addPassenger(new Passenger(query[0].replaceAll("[.]", ""), query[1].replaceAll("[,]", ""), query[2]));
+                            break;
+                        case "ALASKA" :
+                            airlines[1].addPassenger(new Passenger(query[0].replaceAll("[.]", ""), query[1].replaceAll("[,]", ""), query[2]));
+                            break;
+                        case "SOUTHWEST" :
+                            airlines[2].addPassenger(new Passenger(query[0].replaceAll("[.]", ""), query[1].replaceAll("[,]", ""), query[2]));
+                            break;
+                    }
+                }
+            }
+            bfr.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,6 +182,7 @@ public class ReservationServer {
         public void run() {
             System.out.println("Thread" + this.getName());
             while (true) {
+                ReservationServer.read();
                 try {
                     String queue = (String) netois.readObject();
                     System.out.println("found");
