@@ -493,8 +493,6 @@ public class ReservationClient extends JFrame {
                 break;
         }
 
-        String text = air + " Airlines.";
-
         // TODO: 11/30/2019
 
         // TODO: Same as the flightData, need to implement vertical scrolling
@@ -513,6 +511,8 @@ public class ReservationClient extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        String text = String.format(air + " Airlines." + " %d : %d", (capacity - capacityLeft), capacity);
 
         String textCap = capacityLeft + ":" + capacity;
 
