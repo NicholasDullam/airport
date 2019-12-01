@@ -6,34 +6,45 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
 import static java.lang.Integer.parseInt;
 
 public class ReservationClient extends JFrame {
 
+    public static Socket server;
+    public static ObjectOutputStream netoos;
+    public static ObjectInputStream netois;
 
     public static void main(String[] args) {
-
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                boolean auth = false;
                 Passenger x = new Passenger();
-                String hostName = "";
-                String portNum = "";
 
-                while (hostName.equals("")) {
-                    hostName = inputHostName();
-                    if (hostName.equals(JOptionPane.CANCEL_OPTION)) {
-                        System.exit(0);
+                //edge-case adjustment for server auth
+                while (!auth) {
+                    String hostName = "";
+                    String portNum = "";
+                    while (hostName.equals("")) {
+                        hostName = inputHostName();
+                        if (hostName.equals(JOptionPane.CANCEL_OPTION)) {
+                            System.exit(0);
+                        }
                     }
-                }
-                while (portNum.equals("")) {
-                    portNum = inputPortNum();
-                    if (portNum.equals(JOptionPane.CANCEL_OPTION)) {
-                        System.exit(0);
+                    while (portNum.equals("")) {
+                        portNum = inputPortNum();
+                        if (portNum.equals(JOptionPane.CANCEL_OPTION)) {
+                            System.exit(0);
+                        }
                     }
+
+                    //implemented the setServer method to create the static socket variable
+                    auth = setServer(hostName, portNum);
                 }
+
                 welcome(x);
                 //*/
             }
@@ -44,6 +55,18 @@ public class ReservationClient extends JFrame {
         return JOptionPane.showInputDialog(null,
                 "What is the hostname you'd like to connect to?", "Hostname?",
                 JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    //added the setServer method to avoid the previous issues of final or effectively final reference
+    private static boolean setServer(String hostName, String portNum) {
+        try {
+            server = new Socket(hostName, Integer.parseInt(portNum));
+            netoos = new ObjectOutputStream(server.getOutputStream());
+            netois = new ObjectInputStream(server.getInputStream());
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private static String inputPortNum() {
@@ -160,6 +183,7 @@ public class ReservationClient extends JFrame {
             }
         });
 
+        //TODO: replace the new airline constructors with those from the server
         JButton chooseButton = new JButton("Choose this flight");
         chooseButton.addActionListener(e -> {
             int choice = comboBox.getSelectedIndex();
@@ -301,6 +325,12 @@ public class ReservationClient extends JFrame {
                     x.setLastName(lastName);
                     x.setAge(age);
                     x.getBoardingPass().setPassenger(x);
+                    try {
+                        netoos.writeObject(String.format("POST!PASS!%s", x.getBoardingPass().getAirlineString().toUpperCase()));
+                        netoos.writeObject(x);
+                    } catch (Exception j) {
+                        j.printStackTrace();
+                    }
                     x.toString();
                     flightData(x);
                 }
@@ -369,13 +399,41 @@ public class ReservationClient extends JFrame {
                 "PASSENGER FIRST NAME: " + x.getFirstName() + "<br>" +
                 "PASSENGER LAST NAME: " + x.getLastName() + "<br>" +
                 "PASSENGER AGE: " + x.getAge() + "<br>" +
-                "You can now begin boarding at gate A16<br>" +
+                "You can now begin boarding at gate " + x.getBoardingPass().getAirline().getGate() + "<br>" +
                 "--------------------------------------------------------------------------------------------------------------------------------------</html>";
         // TODO: 11/30/2019
-        JLabel readFromServer = new JLabel("here");
+
+
+        // TODO: make scroll layout vertical and center capacity label
+        Passenger[] passengers = null;
+        int capacityLeft = 0;
+        int capacity = 0;
+
+        try {
+            netoos.writeObject(String.format("GET!PASS!%s", x.getBoardingPass().getAirlineString().toUpperCase()));
+            passengers = (Passenger[]) netois.readObject();
+            netoos.writeObject(String.format("GET!CPCL!%s", x.getBoardingPass().getAirlineString().toUpperCase()));
+            capacityLeft = (int) netois.readObject();
+            netoos.writeObject(String.format("GET!CPC!%s", x.getBoardingPass().getAirlineString().toUpperCase()));
+            capacity = (int) netois.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         JPanel scrollPanel = new JPanel();
-        scrollPanel.add(readFromServer);
+
+        scrollPanel.add(new JLabel(capacityLeft + "/" + capacity));
+        for (Passenger passenger: passengers) {
+            if (passenger == null) {
+                break;
+            }
+            String textFill = "<html>" + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
+                passenger.getLastName().toUpperCase() + ", " +
+                passenger.getAge() + "</html>";
+            JLabel readFromServer = new JLabel(textFill);
+            scrollPanel.add(readFromServer);
+        }
+        //
         JScrollPane jsp = new JScrollPane(scrollPanel);
         frame.add(jsp, BorderLayout.CENTER);
 
@@ -413,13 +471,43 @@ public class ReservationClient extends JFrame {
                 air = "Southwest";
                 break;
         }
+
         String text = air + " Airlines.";
 
         // TODO: 11/30/2019
-        String passengerss = "here";
-        JLabel readFromServer = new JLabel(passengerss);
+
+        // TODO: Same as the flightData, need to implement vertical scrolling
+
+        Passenger[] passengers = null;
+        int capacityLeft = 0;
+        int capacity = 0;
+
+        try {
+            netoos.writeObject(String.format("GET!PASS!%s", air.toUpperCase()));
+            passengers = (Passenger[]) netois.readObject();
+            netoos.writeObject(String.format("GET!CPCL!%s", air.toUpperCase()));
+            capacityLeft = (int) netois.readObject();
+            netoos.writeObject(String.format("GET!CPC!%s", air.toUpperCase()));
+            capacity = (int) netois.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String textCap = capacityLeft + ":" + capacity;
+
         JPanel scrollPanel = new JPanel();
-        scrollPanel.add(readFromServer);
+
+        for (Passenger passenger: passengers) {
+            if(passenger == null) {
+                break;
+            }
+            String textFill = "<html>" + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
+                passenger.getLastName().toUpperCase() + ", " +
+                passenger.getAge() + "</html>";
+            JLabel readFromServer = new JLabel(textFill);
+            scrollPanel.add(readFromServer);
+        }
+
         JScrollPane jsp = new JScrollPane(scrollPanel);
         frame.add(jsp, BorderLayout.CENTER);
 

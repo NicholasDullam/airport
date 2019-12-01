@@ -10,20 +10,23 @@ public class ReservationServer {
 
     public ReservationServer() {
         try {
-            FileOutputStream fos = new FileOutputStream(new File("reservations.txt"));
-            oos = new ObjectOutputStream(fos);
-            FileInputStream fis = new FileInputStream(new File("reservations.txt"));
-            ois = new ObjectInputStream(fis);
+            ois = new ObjectInputStream(new FileInputStream("reservations.txt"));
             airlines = (Airline[]) ois.readObject();
         } catch (EOFException e) {
+            System.out.println("Reformatting reservations.txt");
             airlines = new Airline[3];
             airlines[0] = new Delta();
             airlines[1] = new Alaska();
             airlines[2] = new Southwest();
-        } catch (IOException e) {
-            e.printStackTrace();
+            save();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (ois != null) ois.close();
+            } catch (Exception j) {
+                j.printStackTrace();
+            }
         }
 
         try {
@@ -33,11 +36,11 @@ public class ReservationServer {
         }
     }
 
-    public void save() {
+    public static void save() {
         try {
+            oos = new ObjectOutputStream(new FileOutputStream("reservations.txt"));
             oos.writeObject(airlines);
             oos.close();
-            ois.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,6 +68,10 @@ public class ReservationServer {
         return getAirline(name).getCapacityLeft();
     }
 
+    public static int getCapacity(String name) {
+        return getAirline(name).getCapacity();
+    }
+
     public static Passenger[] getPassengers(String name) {
         return getAirline(name).getPassengers();
     }
@@ -86,7 +93,6 @@ public class ReservationServer {
     public static void main(String[] args) {
         ReservationServer rs = new ReservationServer();
         try {
-            rs.save();
             rs.startServer();
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,9 +124,16 @@ public class ReservationServer {
                     switch (query[0]) {
                         case "GET" :
                             switch(query[1]) {
-                                case "CPC" :
+                                case "CPCL" :
                                     System.out.println(ReservationServer.getCapacityLeft(query[2]));
-                                    oos.writeInt(ReservationServer.getCapacityLeft(query[2]));
+                                    netoos.writeObject(ReservationServer.getCapacityLeft(query[2]));
+                                    break;
+                                case "PASS" :
+                                    netoos.writeObject(ReservationServer.getPassengers(query[2]));
+                                    System.out.println(ReservationServer.getPassengers(query[2]));
+                                    break;
+                                case "CPC" :
+                                    netoos.writeObject(ReservationServer.getCapacity(query[2]));
                                     break;
                             }
                             break;
@@ -130,10 +143,10 @@ public class ReservationServer {
                                     try {
                                         Passenger passenger = (Passenger) netois.readObject();
                                         ReservationServer.addPassenger(query[2], passenger);
+                                        ReservationServer.save();
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
-                                    netois.readObject();
                                     break;
                             }
                     }
