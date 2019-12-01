@@ -371,6 +371,7 @@ public class ReservationClient extends JFrame {
                 "PASSENGER AGE: " + x.getAge() + "<br>" +
                 "You can now begin boarding at gate A16<br>" +
                 "--------------------------------------------------------------------------------------------------------------------------------------</html>";
+        // TODO: 11/30/2019
         JLabel readFromServer = new JLabel("here");
 
         JPanel scrollPanel = new JPanel();
@@ -413,8 +414,19 @@ public class ReservationClient extends JFrame {
                 break;
         }
         String text = air + " Airlines.";
+
+        // TODO: 11/30/2019
+        String passengerss = "here";
+        JLabel readFromServer = new JLabel(passengerss);
+        JPanel scrollPanel = new JPanel();
+        scrollPanel.add(readFromServer);
+        JScrollPane jsp = new JScrollPane(scrollPanel);
+        frame.add(jsp, BorderLayout.CENTER);
+
         JLabel text1 = new JLabel(text);
         text1.setFont(font1);
         frame.add(text1, BorderLayout.NORTH);
         frame.add(exitButton, BorderLayout.SOUTH);
     }
+
+}
