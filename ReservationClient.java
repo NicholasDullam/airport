@@ -251,8 +251,27 @@ public class ReservationClient extends JFrame {
             }
         });
 
+        comboBox.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
+                    System.out.println("here");
+                    displayManifest(comboBox.getSelectedIndex());
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
         chooseText.add(text1, BorderLayout.NORTH);
-        //chooseText.add(comboBox, BorderLayout.SOUTH);
         airlineText.add(comboBox, BorderLayout.NORTH);
         airlineText.add(textBox, BorderLayout.SOUTH);
         panel.add(exitButton);
@@ -329,11 +348,12 @@ public class ReservationClient extends JFrame {
         JTextArea textFieldLN = new JTextArea(4, 50);
         JTextArea textFieldAGE = new JTextArea(4, 50);
 
+
         JButton nextButton = new JButton("Next");
         nextButton.addActionListener(e -> {
-            if (textFieldFN.getText().equals("") || textFieldLN.getText().equals("") || textFieldAGE.getText().equals("")) {
-                JOptionPane.showMessageDialog(null, "Please fill out all required fields " +
-                        "then press \"Next\" to continue", "ERROR", JOptionPane.ERROR_MESSAGE);
+            if (textFieldFN.getText().equals("") || textFieldLN.getText().equals("") || !isNumeric(textFieldAGE.getText())) {
+                JOptionPane.showMessageDialog(null, "Please fill out all required fields correctly" +
+                        " then press \"Next\" to continue", "ERROR", JOptionPane.ERROR_MESSAGE);
             } else {
                 if (!confirmInfo(textFieldFN.getText(), textFieldLN.getText(), textFieldAGE.getText())) {
 
@@ -377,7 +397,7 @@ public class ReservationClient extends JFrame {
         String message = "<html>Are all the details you entered correct?<br>" +
                 "The passenger's name is " + firstN + " " + lastN + " and their age is " + age + ".<br>" +
                 "If all the information shown is correct, select the Yes<br> button below, otherwise, " +
-                "select the No button.</html>";
+                "select the \"No\" button.</html>";
         choice = JOptionPane.showConfirmDialog(null, message, "Confirm Info",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
         if (choice == JOptionPane.NO_OPTION) {
@@ -394,7 +414,7 @@ public class ReservationClient extends JFrame {
     public static void flightData(Passenger x) {
         JFrame frame = new JFrame("Purdue University Flight Reservation System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
+        frame.setSize(800, 600);
         frame.setVisible(true);
         JPanel panel = new JPanel();
 
@@ -408,13 +428,13 @@ public class ReservationClient extends JFrame {
         });
 
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
-        String text = "<html>Flight data displaying for " + x.getBoardingPass().getAirlineString() + " Airlines<br>" +
-                "Enjoy your flight!<br>Flight is now boarding at Gate A16</html>";
+        String text = "<html><div style='text-align: center;'>Flight data displaying for " + x.getBoardingPass().getAirlineString() + " Airlines<br>" +
+                "Enjoy your flight!<br>Flight is now boarding at Gate A16</div></html>";
         JLabel text1 = new JLabel(text, SwingConstants.CENTER);
         text1.setFont(font1);
         frame.add(text1, BorderLayout.NORTH);
 
-        Font font2 = new Font("SansSerif", Font.PLAIN, 15);
+        Font font2 = new Font("SansSerif", Font.PLAIN, 10);
         String text3 = "<html>--------------------------------------------------------------------------------------------------------------------------------------<br>" +
                 "BOARDING PASS FOR FLIGHT 18000 WITH " + x.getBoardingPass().getAirlineString() + " Airlines<br>" +
                 "PASSENGER FIRST NAME: " + x.getFirstName() + "<br>" +
@@ -429,6 +449,7 @@ public class ReservationClient extends JFrame {
         Passenger[] passengers = null;
         int capacityLeft = 0;
         int capacity = 0;
+        int c2 = 0;
 
         try {
             netoos.writeObject(String.format("GET!PASS!%s", x.getBoardingPass().getAirlineString().toUpperCase()));
@@ -441,21 +462,24 @@ public class ReservationClient extends JFrame {
             e.printStackTrace();
         }
 
+        c2 = capacity - capacityLeft;
         JPanel scrollPanel = new JPanel();
-
-        scrollPanel.add(new JLabel(capacityLeft + "/" + capacity));
+        String c3 = "   " + c2 + ":" + capacity;
+        String textFill = "";
         for (Passenger passenger: passengers) {
             if (passenger == null) {
                 break;
             }
-            String textFill = "<html>" + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
+            textFill = textFill + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
                     passenger.getLastName().toUpperCase() + ", " +
-                    passenger.getAge() + "</html>";
-            JLabel readFromServer = new JLabel(textFill);
-            scrollPanel.add(readFromServer);
+                    passenger.getAge() + "<br>";
         }
-        //
+        JLabel readFromServer = new JLabel("<html>" + c3 + "<br>" + textFill + "</html>");
+        scrollPanel.add(readFromServer);
+
+
         JScrollPane jsp = new JScrollPane(scrollPanel);
+        jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         frame.add(jsp, BorderLayout.CENTER);
 
         JLabel text4 = new JLabel(text3);
@@ -469,7 +493,7 @@ public class ReservationClient extends JFrame {
 
     public static void displayManifest(int choice) {
         JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(frame.HIDE_ON_CLOSE);
         frame.setSize(300, 200);
         frame.setVisible(true);
         JPanel panel = new JPanel();
@@ -518,24 +542,38 @@ public class ReservationClient extends JFrame {
 
         JPanel scrollPanel = new JPanel();
 
+        String textFill = "";
         for (Passenger passenger: passengers) {
             if(passenger == null) {
                 break;
             }
-            String textFill = "<html>" + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
+            textFill = textFill + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
                     passenger.getLastName().toUpperCase() + ", " +
-                    passenger.getAge() + "</html>";
-            JLabel readFromServer = new JLabel(textFill);
-            scrollPanel.add(readFromServer);
+                    passenger.getAge() + "<br>";
         }
+        JLabel readFromServer = new JLabel("<html><div style='text-align: left;'>" + textFill + "</div></html>");
+        scrollPanel.add(readFromServer);
 
         JScrollPane jsp = new JScrollPane(scrollPanel);
+        jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         frame.add(jsp, BorderLayout.CENTER);
 
         JLabel text1 = new JLabel(text);
         text1.setFont(font1);
         frame.add(text1, BorderLayout.NORTH);
         frame.add(exitButton, BorderLayout.SOUTH);
+    }
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            int i = Integer.parseInt(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 
 }
