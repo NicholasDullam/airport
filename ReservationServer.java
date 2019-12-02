@@ -218,6 +218,9 @@ public class ReservationServer {
                                 case "CPC" :
                                     netoos.writeObject(ReservationServer.getCapacity(query[2]));
                                     break;
+                                case "AIR" :
+                                    netoos.writeObject(ReservationServer.airlines);
+                                    break;
                             }
                             break;
                         case "POST" :
