@@ -67,4 +67,6 @@ public abstract class Airline implements Serializable {
             }
         }
     }
+
+    public abstract String getDescription();
 }
