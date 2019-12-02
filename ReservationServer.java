@@ -217,7 +217,7 @@ public class ReservationServer {
                             }
                     }
                 } catch (EOFException e) {
-                    continue;
+                    break;
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
