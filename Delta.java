@@ -11,4 +11,8 @@ public class Delta extends Airline {
     public Delta() {
         super("Delta", 200);
     }
+
+    public Delta(int capacity) {
+        super("Delta", capacity);
+    }
 }

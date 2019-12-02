@@ -11,4 +11,8 @@ public class Alaska extends Airline {
     public Alaska() {
         super("Alaska", 100);
     }
+
+    public Alaska(int capacity) {
+        super("Alaska", capacity);
+    }
 }

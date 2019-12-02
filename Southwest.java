@@ -11,4 +11,8 @@ public class Southwest extends Airline {
     public Southwest() {
         super("Southwest", 100);
     }
+
+    public Southwest(int capacity) {
+        super("Southwest", capacity);
+    }
 }

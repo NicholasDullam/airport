@@ -103,6 +103,23 @@ public class ReservationServer {
                             airlines[2].addPassenger(new Passenger(query[0].replaceAll("[.]", ""), query[1].replaceAll("[,]", ""), query[2]));
                             break;
                     }
+                } else if (passengers == false) {
+                    try {
+                        String[] capacity = file.get(i).split("/");
+                        switch (airline) {
+                            case "DELTA" :
+                                airlines[0] = new Delta(Integer.parseInt(capacity[1]));
+                                break;
+                            case "ALASKA" :
+                                airlines[1] = new Alaska(Integer.parseInt(capacity[1]));
+                                break;
+                            case "SOUTHWEST" :
+                                airlines[2] = new Southwest(Integer.parseInt(capacity[1]));
+                                break;
+                        }
+                    } catch (Exception e) {
+                        continue;
+                    }
                 }
             }
             bfr.close();
