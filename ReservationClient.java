@@ -13,8 +13,15 @@ import static javax.swing.GroupLayout.Alignment.*;
 
 import java.awt.Component;
 
-
 import static java.lang.Integer.parseInt;
+
+/**
+ * Project 5 - Airport Manager
+ *
+ * @author Nicholas Dullam ndullam
+ * @author Michael Taylor taylo874
+ * @version 11-20-19
+ */
 
 public class ReservationClient extends JFrame {
 
@@ -29,9 +36,6 @@ public class ReservationClient extends JFrame {
                 boolean auth = false;
                 Passenger x = new Passenger();
 
-
-                //welcome(x);
-                //edge-case adjustment for server auth
                 while (!auth) {
                     String hostName = "";
                     String portNum = "";
@@ -48,12 +52,10 @@ public class ReservationClient extends JFrame {
                         }
                     }
 
-                    //implemented the setServer method to create the static socket variable
                     auth = setServer(hostName, portNum);
                 }
 
                 welcome(x);
-                //*/
             }
         });
     }
@@ -92,10 +94,10 @@ public class ReservationClient extends JFrame {
         frame.setSize(600, 400);
         frame.setVisible(true);
 
-        ImageIcon imageIcon = new ImageIcon("purdueP.png"); // load the image to a imageIcon
-        Image image = imageIcon.getImage(); // transform it
-        Image newimg = image.getScaledInstance(400, 260, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
-        imageIcon = new ImageIcon(newimg);  // transform it back
+        ImageIcon imageIcon = new ImageIcon("purdueP.png");
+        Image image = imageIcon.getImage();
+        Image newimg = image.getScaledInstance(400, 260, java.awt.Image.SCALE_SMOOTH);
+        imageIcon = new ImageIcon(newimg);
         JLabel imagepa = new JLabel(imageIcon);
         frame.add(imagepa);
 
@@ -196,9 +198,8 @@ public class ReservationClient extends JFrame {
             System.exit(0);
         });
 
-
-        //TODO: replace the new airline constructors with those from the server
-        JButton chooseButton = new JButton("<html><div style='text-align: center;'>Choose this flight</div></html>");
+        JButton chooseButton = new JButton("<html><div style='text-align: center;'>Choose this flight" +
+                "</div></html>");
         chooseButton.addActionListener(e -> {
             Airline[] airlineObjectsE = null;
 
@@ -260,7 +261,6 @@ public class ReservationClient extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
-                    System.out.println("here");
                     displayManifest((String) comboBox.getSelectedItem());
                 }
             }
@@ -280,7 +280,6 @@ public class ReservationClient extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
-                    System.out.println("here");
                     displayManifest((String) comboBox.getSelectedItem());
                 }
             }
@@ -310,7 +309,8 @@ public class ReservationClient extends JFrame {
         frame.setVisible(true);
 
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
-        String text = "<html><div style='text-align: center;'>Are you sure that you want to book a flight on <br>" + x.getBoardingPass().getAirlineString()
+        String text = "<html><div style='text-align: center;'>Are you sure that you want to book a flight on <br>"
+                + x.getBoardingPass().getAirlineString()
                 + " Airlines?</div></html>";
         JLabel text1 = new JLabel(text, SwingConstants.CENTER);
         text1.setFont(font1);
@@ -450,8 +450,10 @@ public class ReservationClient extends JFrame {
         });
 
         nextButton.addActionListener(e -> {
-            if (textFieldFN.getText().equals("") || textFieldLN.getText().equals("") || !isNumeric(textFieldAGE.getText())) {
-                JOptionPane.showMessageDialog(null, "Please fill out all required fields correctly" +
+            if (textFieldFN.getText().equals("") || textFieldLN.getText().equals("") ||
+                    !isNumeric(textFieldAGE.getText().trim())) {
+                JOptionPane.showMessageDialog(null, "Please fill out all required fields " +
+                        "correctly" +
                         " then press \"Next\" to continue", "ERROR", JOptionPane.ERROR_MESSAGE);
             } else {
                 if (!confirmInfo(textFieldFN.getText(), textFieldLN.getText(), textFieldAGE.getText())) {
@@ -466,7 +468,8 @@ public class ReservationClient extends JFrame {
                     x.setAge(age);
                     x.getBoardingPass().setPassenger(x);
                     try {
-                        netoos.writeObject(String.format("POST!PASS!%s", x.getBoardingPass().getAirlineString().toUpperCase()));
+                        netoos.writeObject(
+                                String.format("POST!PASS!%s", x.getBoardingPass().getAirlineString().toUpperCase()));
                         netoos.writeObject(x);
                     } catch (Exception j) {
                         j.printStackTrace();
@@ -532,19 +535,25 @@ public class ReservationClient extends JFrame {
         });
 
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
-        String text = "<html><div style='text-align: center;'>Flight data displaying for " + x.getBoardingPass().getAirlineString() + " Airlines<br>" +
-                "Enjoy your flight!<br>Flight is now boarding at Gate " + x.getBoardingPass().getAirline().getGate() + "</div></html>";
+        String text = "<html><div style='text-align: center;'>Flight data displaying for " +
+                x.getBoardingPass().getAirlineString() + " Airlines<br>" +
+                "Enjoy your flight!<br>Flight is now boarding at Gate " +
+                x.getBoardingPass().getAirline().getGate() + "</div></html>";
         JLabel text1 = new JLabel(text, SwingConstants.CENTER);
         text1.setFont(font1);
 
         Font font2 = new Font("SansSerif", Font.PLAIN, 10);
-        String text3 = "<html>------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------<br>" +
+        String text3 = "<html>---------------------------------------------------------------------------------------" +
+                "--------------------------------------------------------------------------------------------------" +
+                "-------------------------<br>" +
                 "BOARDING PASS FOR FLIGHT 18000 WITH " + x.getBoardingPass().getAirlineString() + " Airlines<br>" +
                 "PASSENGER FIRST NAME: " + x.getFirstName() + "<br>" +
                 "PASSENGER LAST NAME: " + x.getLastName() + "<br>" +
                 "PASSENGER AGE: " + x.getAge() + "<br>" +
                 "You can now begin boarding at gate " + x.getBoardingPass().getAirline().getGate() + "<br>" +
-                "------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</html>";
+                "----------------------------------------------------------------------------------------------------" +
+                "---------------------------------------------------------------------------------------------------" +
+                "-----------</html>";
 
         Passenger[] passengers = null;
         int capacityLeft = 0;
@@ -587,7 +596,6 @@ public class ReservationClient extends JFrame {
         northPanel.add(text1, BorderLayout.NORTH);
         northPanel.add(jsp, BorderLayout.SOUTH);
 
-        //text1.setFont(font1);
         centerPanel.add(text4);
         southPanel.add(exitButton);
         southPanel.add(refreshButton);
@@ -613,10 +621,6 @@ public class ReservationClient extends JFrame {
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
 
         air = choice;
-
-        // TODO: 11/30/2019
-
-        // TODO: Same as the flightData, need to implement vertical scrolling
 
         Passenger[] passengers = null;
         int capacityLeft = 0;
