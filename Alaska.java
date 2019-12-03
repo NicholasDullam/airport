@@ -1,10 +1,9 @@
 /**
- *  Project 5 - Airport Manager
+ * Project 5 - Airport Manager
  *
- *  @author Nicholas Dullam ndullam
- *
- *  @version 11-20-19
- *
+ * @author Nicholas Dullam ndullam
+ * @author Michael Taylor taylo874
+ * @version 11-20-19
  */
 
 public class Alaska extends Airline {
