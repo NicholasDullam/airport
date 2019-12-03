@@ -67,7 +67,7 @@ public class ReservationClient extends JFrame {
             netois = new ObjectInputStream(server.getInputStream());
             return true;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Incorrect hostname or port number.", 
+            JOptionPane.showMessageDialog(null, "Incorrect hostname or port number.",
                 "ERROR", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -439,7 +439,8 @@ public class ReservationClient extends JFrame {
         });
         JButton refreshButton = new JButton("Refresh Flight Status");
         refreshButton.addActionListener(e -> {
-            // TODO: 11/30/2019 refresh
+            frame.setVisible(false);
+            flightData(x);
         });
 
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
