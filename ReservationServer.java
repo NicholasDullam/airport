@@ -90,7 +90,6 @@ public class ReservationServer {
                 } else if (!airline.equals("") && file.get(i).contains("passenger list")) {
                     passengers = true;
                 } else if (passengers == true && !(file.get(i).contains("DELTA") || file.get(i).contains("ALASKA") || file.get(i).contains("SOUTHWEST"))) {
-                    System.out.println(i);
                     String[] query = file.get(i).split(" ");
                     switch (airline) {
                         case "DELTA" :
@@ -197,23 +196,20 @@ public class ReservationServer {
         }
 
         public void run() {
-            System.out.println("Thread" + this.getName());
+            System.out.println("\nConnected");
             while (true) {
                 ReservationServer.read();
                 try {
                     String queue = (String) netois.readObject();
-                    System.out.println("found");
                     String[] query = queue.split("!");
                     switch (query[0]) {
                         case "GET" :
                             switch(query[1]) {
                                 case "CPCL" :
-                                    System.out.println(ReservationServer.getCapacityLeft(query[2]));
                                     netoos.writeObject(ReservationServer.getCapacityLeft(query[2]));
                                     break;
                                 case "PASS" :
                                     netoos.writeObject(ReservationServer.getPassengers(query[2]));
-                                    System.out.println(ReservationServer.getPassengers(query[2]));
                                     break;
                                 case "CPC" :
                                     netoos.writeObject(ReservationServer.getCapacity(query[2]));
