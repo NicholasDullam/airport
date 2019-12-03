@@ -2,6 +2,14 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Project 5 - Airport Manager
+ *
+ * @author Nicholas Dullam ndullam
+ * @author Michael Taylor taylo874
+ * @version 11-20-19
+ */
+
 public class ReservationServer {
 
     private static ServerSocket socket;
@@ -28,14 +36,15 @@ public class ReservationServer {
 
         for (Airline airline : airlines) {
             pwr.print(airline.getName().toUpperCase() + "\n" +
-                (airline.getCapacity() - airline.getCapacityLeft()) + "/" + airline.getCapacity() + "\n" +
-                airline.getName() + " passenger list" + "\n" + "\n");
+                    (airline.getCapacity() - airline.getCapacityLeft()) + "/" + airline.getCapacity() + "\n" +
+                    airline.getName() + " passenger list" + "\n" + "\n");
             for (Passenger passenger : airline.getPassengers()) {
                 if (passenger == null) {
                     break;
                 }
-                pwr.print(passenger.getFirstName().substring(0, 1).toUpperCase() + ". " + passenger.getLastName().toUpperCase() + ", " + passenger.getAge() +
-                    "\n-----------------" + airline.getName().toUpperCase() + "\n" + "\n");
+                pwr.print(passenger.getFirstName().substring(0, 1).toUpperCase() + ". " +
+                        passenger.getLastName().toUpperCase() + ", " + passenger.getAge() +
+                        "\n-----------------" + airline.getName().toUpperCase() + "\n" + "\n");
             }
         }
 
@@ -89,30 +98,34 @@ public class ReservationServer {
                     airline = file.get(i);
                 } else if (!airline.equals("") && file.get(i).contains("passenger list")) {
                     passengers = true;
-                } else if (passengers == true && !(file.get(i).contains("DELTA") || file.get(i).contains("ALASKA") || file.get(i).contains("SOUTHWEST"))) {
+                } else if (passengers == true && !(file.get(i).contains("DELTA") || file.get(i).contains("ALASKA") ||
+                        file.get(i).contains("SOUTHWEST"))) {
                     String[] query = file.get(i).split(" ");
                     switch (airline) {
-                        case "DELTA" :
-                            airlines[0].addPassenger(new Passenger(query[0].replaceAll("[.]", ""), query[1].replaceAll("[,]", ""), query[2]));
+                        case "DELTA":
+                            airlines[0].addPassenger(new Passenger(query[0].replaceAll("[.]", ""),
+                                    query[1].replaceAll("[,]", ""), query[2]));
                             break;
-                        case "ALASKA" :
-                            airlines[1].addPassenger(new Passenger(query[0].replaceAll("[.]", ""), query[1].replaceAll("[,]", ""), query[2]));
+                        case "ALASKA":
+                            airlines[1].addPassenger(new Passenger(query[0].replaceAll("[.]", ""),
+                                    query[1].replaceAll("[,]", ""), query[2]));
                             break;
-                        case "SOUTHWEST" :
-                            airlines[2].addPassenger(new Passenger(query[0].replaceAll("[.]", ""), query[1].replaceAll("[,]", ""), query[2]));
+                        case "SOUTHWEST":
+                            airlines[2].addPassenger(new Passenger(query[0].replaceAll("[.]", ""),
+                                    query[1].replaceAll("[,]", ""), query[2]));
                             break;
                     }
                 } else if (passengers == false) {
                     try {
                         String[] capacity = file.get(i).split("/");
                         switch (airline) {
-                            case "DELTA" :
+                            case "DELTA":
                                 airlines[0] = new Delta(Integer.parseInt(capacity[1]));
                                 break;
-                            case "ALASKA" :
+                            case "ALASKA":
                                 airlines[1] = new Alaska(Integer.parseInt(capacity[1]));
                                 break;
-                            case "SOUTHWEST" :
+                            case "SOUTHWEST":
                                 airlines[2] = new Southwest(Integer.parseInt(capacity[1]));
                                 break;
                         }
@@ -203,25 +216,25 @@ public class ReservationServer {
                     String queue = (String) netois.readObject();
                     String[] query = queue.split("!");
                     switch (query[0]) {
-                        case "GET" :
-                            switch(query[1]) {
-                                case "CPCL" :
+                        case "GET":
+                            switch (query[1]) {
+                                case "CPCL":
                                     netoos.writeObject(ReservationServer.getCapacityLeft(query[2]));
                                     break;
-                                case "PASS" :
+                                case "PASS":
                                     netoos.writeObject(ReservationServer.getPassengers(query[2]));
                                     break;
-                                case "CPC" :
+                                case "CPC":
                                     netoos.writeObject(ReservationServer.getCapacity(query[2]));
                                     break;
-                                case "AIR" :
+                                case "AIR":
                                     netoos.writeObject(ReservationServer.airlines);
                                     break;
                             }
                             break;
-                        case "POST" :
-                            switch(query[1]) {
-                                case "PASS" :
+                        case "POST":
+                            switch (query[1]) {
+                                case "PASS":
                                     try {
                                         Passenger passenger = (Passenger) netois.readObject();
                                         ReservationServer.addPassenger(query[2], passenger);
