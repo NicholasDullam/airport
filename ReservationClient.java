@@ -9,6 +9,11 @@ import java.io.IOException;
 import java.io.*;
 import java.net.*;
 
+import static javax.swing.GroupLayout.Alignment.*;
+
+import java.awt.Component;
+
+
 import static java.lang.Integer.parseInt;
 
 public class ReservationClient extends JFrame {
@@ -68,7 +73,7 @@ public class ReservationClient extends JFrame {
             return true;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Incorrect hostname or port number.",
-                "ERROR", JOptionPane.ERROR_MESSAGE);
+                    "ERROR", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -89,7 +94,7 @@ public class ReservationClient extends JFrame {
 
         ImageIcon imageIcon = new ImageIcon("purdueP.png"); // load the image to a imageIcon
         Image image = imageIcon.getImage(); // transform it
-        Image newimg = image.getScaledInstance(400, 260,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+        Image newimg = image.getScaledInstance(400, 260, java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
         imageIcon = new ImageIcon(newimg);  // transform it back
         JLabel imagepa = new JLabel(imageIcon);
         frame.add(imagepa);
@@ -362,9 +367,88 @@ public class ReservationClient extends JFrame {
         JTextArea textFieldFN = new JTextArea(4, 50);
         JTextArea textFieldLN = new JTextArea(4, 50);
         JTextArea textFieldAGE = new JTextArea(4, 50);
-
-
         JButton nextButton = new JButton("Next");
+
+        textFieldFN.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                    textFieldFN.transferFocus();
+                }
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
+        textFieldLN.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                    textFieldLN.transferFocus();
+
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
+        textFieldAGE.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                    textFieldAGE.transferFocus();
+
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
+        nextButton.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                    nextButton.transferFocus();
+                }
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
         nextButton.addActionListener(e -> {
             if (textFieldFN.getText().equals("") || textFieldLN.getText().equals("") || !isNumeric(textFieldAGE.getText())) {
                 JOptionPane.showMessageDialog(null, "Please fill out all required fields correctly" +
@@ -429,9 +513,13 @@ public class ReservationClient extends JFrame {
     public static void flightData(Passenger x) {
         JFrame frame = new JFrame("Purdue University Flight Reservation System");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(850, 700);
         frame.setVisible(true);
-        JPanel panel = new JPanel();
+        frame.setLayout(new BorderLayout());
+        JPanel southPanel = new JPanel();
+        JPanel northPanel = new JPanel();
+        northPanel.setLayout(new BorderLayout());
+        JPanel centerPanel = new JPanel();
 
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
@@ -448,20 +536,16 @@ public class ReservationClient extends JFrame {
                 "Enjoy your flight!<br>Flight is now boarding at Gate " + x.getBoardingPass().getAirline().getGate() + "</div></html>";
         JLabel text1 = new JLabel(text, SwingConstants.CENTER);
         text1.setFont(font1);
-        frame.add(text1, BorderLayout.NORTH);
 
         Font font2 = new Font("SansSerif", Font.PLAIN, 10);
-        String text3 = "<html>--------------------------------------------------------------------------------------------------------------------------------------<br>" +
+        String text3 = "<html>------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------<br>" +
                 "BOARDING PASS FOR FLIGHT 18000 WITH " + x.getBoardingPass().getAirlineString() + " Airlines<br>" +
                 "PASSENGER FIRST NAME: " + x.getFirstName() + "<br>" +
                 "PASSENGER LAST NAME: " + x.getLastName() + "<br>" +
                 "PASSENGER AGE: " + x.getAge() + "<br>" +
                 "You can now begin boarding at gate " + x.getBoardingPass().getAirline().getGate() + "<br>" +
-                "--------------------------------------------------------------------------------------------------------------------------------------</html>";
-        // TODO: 11/30/2019
+                "------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</html>";
 
-
-        // TODO: make scroll layout vertical and center capacity label
         Passenger[] passengers = null;
         int capacityLeft = 0;
         int capacity = 0;
@@ -479,31 +563,37 @@ public class ReservationClient extends JFrame {
         }
 
         c2 = capacity - capacityLeft;
-        JPanel scrollPanel = new JPanel();
-        String c3 = "   " + c2 + ":" + capacity;
+        String c3 = "" + c2 + ":" + capacity;
+        JLabel limitedCapacity = new JLabel(c3, SwingConstants.CENTER);
+        Font fontx = new Font("SansSerif", Font.TYPE1_FONT, 17);
+        limitedCapacity.setFont(fontx);
+
         String textFill = "";
-        for (Passenger passenger: passengers) {
+        for (Passenger passenger : passengers) {
             if (passenger == null) {
                 break;
             }
-            textFill = textFill + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
+            textFill = textFill + passenger.getFirstName().substring(0, 1).toUpperCase() + ". " +
                     passenger.getLastName().toUpperCase() + ", " +
                     passenger.getAge() + "<br>";
         }
-        JLabel readFromServer = new JLabel("<html>" + c3 + "<br>" + textFill + "</html>");
-        scrollPanel.add(readFromServer);
-
-
-        JScrollPane jsp = new JScrollPane(scrollPanel);
-        jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        frame.add(jsp, BorderLayout.CENTER);
+        textFill = c3 + "<br>" + textFill;
+        JLabel readFromServer = new JLabel("<html><br>" + textFill + "</html>");
 
         JLabel text4 = new JLabel(text3);
-        text1.setFont(font1);
-        panel.add(text4, BorderLayout.NORTH);
-        panel.add(exitButton, BorderLayout.SOUTH);
-        panel.add(refreshButton, BorderLayout.SOUTH);
-        frame.add(panel, BorderLayout.SOUTH);
+        JScrollPane jsp = new JScrollPane(readFromServer);
+        jsp.setPreferredSize(new Dimension(850, 400));
+        jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        northPanel.add(text1, BorderLayout.NORTH);
+        northPanel.add(jsp, BorderLayout.SOUTH);
+
+        //text1.setFont(font1);
+        centerPanel.add(text4);
+        southPanel.add(exitButton);
+        southPanel.add(refreshButton);
+        frame.add(northPanel, BorderLayout.NORTH);
+        frame.add(centerPanel, BorderLayout.CENTER);
+        frame.add(southPanel, BorderLayout.SOUTH);
 
     }
 
@@ -550,11 +640,11 @@ public class ReservationClient extends JFrame {
         JPanel scrollPanel = new JPanel();
 
         String textFill = "";
-        for (Passenger passenger: passengers) {
-            if(passenger == null) {
+        for (Passenger passenger : passengers) {
+            if (passenger == null) {
                 break;
             }
-            textFill = textFill + passenger.getFirstName().substring(0,1).toUpperCase() + ". " +
+            textFill = textFill + passenger.getFirstName().substring(0, 1).toUpperCase() + ". " +
                     passenger.getLastName().toUpperCase() + ", " +
                     passenger.getAge() + "<br>";
         }
