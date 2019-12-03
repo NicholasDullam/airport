@@ -67,6 +67,8 @@ public class ReservationClient extends JFrame {
             netois = new ObjectInputStream(server.getInputStream());
             return true;
         } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Incorrect hostname or port number.", 
+                "ERROR", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -157,7 +159,14 @@ public class ReservationClient extends JFrame {
         frame.setSize(600, 400);
         frame.setVisible(true);
         final String airlineChoice = "";
-        String[] airlines = {"Alaska", "Delta", "Southwest"};
+        Airline[] airlineObjects = null;
+
+        try {
+            netoos.writeObject("GET!AIR!ALL");
+            airlineObjects = (Airline[]) netois.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         JPanel chooseText = new JPanel();
         JPanel airlineText = new JPanel();
@@ -170,9 +179,12 @@ public class ReservationClient extends JFrame {
 
 
         JComboBox<String> comboBox = new JComboBox();
-        comboBox.addItem("Alaska");
-        comboBox.addItem("Delta");
-        comboBox.addItem("Southwest");
+
+        for (int i = 0; i < airlineObjects.length; i++) {
+            if (airlineObjects[i].getCapacityLeft() != 0) {
+                comboBox.addItem(airlineObjects[i].getName());
+            }
+        }
 
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
@@ -183,50 +195,53 @@ public class ReservationClient extends JFrame {
         //TODO: replace the new airline constructors with those from the server
         JButton chooseButton = new JButton("<html><div style='text-align: center;'>Choose this flight</div></html>");
         chooseButton.addActionListener(e -> {
-            int choice = comboBox.getSelectedIndex();
-            switch (choice) {
-                case 0:
-                    x.setBoardingPass(new BoardingPass(new Alaska()));
-                    break;
-                case 1:
-                    x.setBoardingPass(new BoardingPass(new Delta()));
-                    break;
-                case 2:
-                    x.setBoardingPass(new BoardingPass(new Southwest()));
-                    break;
+            Airline[] airlineObjectsE = null;
+
+            try {
+                netoos.writeObject("GET!AIR!ALL");
+                airlineObjectsE = (Airline[]) netois.readObject();
+            } catch (Exception j) {
+                j.printStackTrace();
+            }
+
+            String choice = (String) comboBox.getSelectedItem();
+
+            for (int i = 0; i < airlineObjectsE.length; i++) {
+                if (choice.equals(airlineObjectsE[i].getName())) {
+                    x.setBoardingPass(new BoardingPass(airlineObjectsE[i]));
+                }
             }
 
             frame.setVisible(false);
             confirmAirline(x);
         });
 
-        String alaskanText = "<html><div style='text-align: center;'>Alaskan Airlines is proud to serve the strong " +
-                "and <br>knowledgeable Boilermakers from Purdue University.<br>" +
-                " We primarily fly westward, and often have stops in Alaska and " +
-                "California.<br>We have first class amenities, even in coach class.<br>We provide fun snacks, " +
-                "such as pretzels and goldfish.<br>We also have comfortable seats, and free WiFi.<br>We hope " +
-                "you choose Alaska Airlines for your next itinerary!</div></html>";
-        JLabel textBox = new JLabel(alaskanText);
-        textBox.setPreferredSize(new Dimension(500, 300));
-        comboBox.addItemListener(e -> {
-            int selectedIndex = comboBox.getSelectedIndex();
-            switch (selectedIndex) {
-                case 0:
-                    textBox.setText(alaskanText);
+        String first = "";
 
-                    break;
-                case 1:
-                    textBox.setText("<html><div style='text-align: center;'>Delta Airlines is proud to be one of the five premier Airlines at Purdue University" +
-                            ". <br>We are extremely exceptional services, with free limited WiFi for all customers.<br>" +
-                            "Passengers who use T-Mobile as a cell phone carrier get additional benefits.<br> We are also" +
-                            "happy to offer power outlets in each seat for passenger use. We hope you choose to fly Delta" +
-                            "as your next Airline.</div></html>");
-                    break;
-                case 2:
-                    textBox.setText("<html><div style='text-align: center;'>Southwest Airlines is proud to offer flights to Purdue University.<br> We are happy " +
-                            "to offer free in flight WiFi, as well as our amazing snacks.<br> In addition, we offer flights" +
-                            "for much cheaper than other airlines, and offer two free checked bags.<br>We hope you choose " +
-                            "Southwest for your next flight.</div></html>");
+        for (int i = 0; i < airlineObjects.length; i++) {
+            if (airlineObjects[i].getCapacityLeft() != 0) {
+                first = airlineObjects[i].getDescription();
+                break;
+            }
+        }
+
+        JLabel textBox = new JLabel(first);
+        textBox.setPreferredSize(new Dimension(500, 300));
+
+        comboBox.addItemListener(e -> {
+            Airline[] airlineObjectsE = null;
+            try {
+                netoos.writeObject("GET!AIR!ALL");
+                airlineObjectsE = (Airline[]) netois.readObject();
+            } catch (Exception j) {
+                j.printStackTrace();
+            }
+
+            String choice = (String) comboBox.getSelectedItem();
+            for (int i = 0; i < airlineObjectsE.length; i++) {
+                if (choice.equals(airlineObjectsE[i].getName())) {
+                    textBox.setText(airlineObjectsE[i].getDescription());
+                }
             }
         });
 
@@ -241,7 +256,7 @@ public class ReservationClient extends JFrame {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
                     System.out.println("here");
-                    displayManifest(comboBox.getSelectedIndex());
+                    displayManifest((String) comboBox.getSelectedItem());
                 }
             }
 
@@ -261,7 +276,7 @@ public class ReservationClient extends JFrame {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_BACK_SLASH) {
                     System.out.println("here");
-                    displayManifest(comboBox.getSelectedIndex());
+                    displayManifest((String) comboBox.getSelectedItem());
                 }
             }
 
@@ -429,7 +444,7 @@ public class ReservationClient extends JFrame {
 
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
         String text = "<html><div style='text-align: center;'>Flight data displaying for " + x.getBoardingPass().getAirlineString() + " Airlines<br>" +
-                "Enjoy your flight!<br>Flight is now boarding at Gate A16</div></html>";
+                "Enjoy your flight!<br>Flight is now boarding at Gate " + x.getBoardingPass().getAirline().getGate() + "</div></html>";
         JLabel text1 = new JLabel(text, SwingConstants.CENTER);
         text1.setFont(font1);
         frame.add(text1, BorderLayout.NORTH);
@@ -491,7 +506,7 @@ public class ReservationClient extends JFrame {
 
     }
 
-    public static void displayManifest(int choice) {
+    public static void displayManifest(String choice) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(frame.HIDE_ON_CLOSE);
         frame.setSize(300, 200);
@@ -505,17 +520,8 @@ public class ReservationClient extends JFrame {
 
         String air = "";
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
-        switch (choice) {
-            case 0:
-                air = "Alaska";
-                break;
-            case 1:
-                air = "Delta";
-                break;
-            case 2:
-                air = "Southwest";
-                break;
-        }
+
+        air = choice;
 
         // TODO: 11/30/2019
 
