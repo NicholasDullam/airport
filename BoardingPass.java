@@ -1,12 +1,11 @@
 import java.io.Serializable;
 
 /**
- *  Project 5 - Airport Manager
+ * Project 5 - Airport Manager
  *
- *  @author Nicholas Dullam ndullam
- *
- *  @version 11-20-19
- *
+ * @author Nicholas Dullam ndullam
+ * @author Michael Taylor taylo874
+ * @version 11-20-19
  */
 
 public class BoardingPass implements Serializable {
@@ -39,16 +38,15 @@ public class BoardingPass implements Serializable {
     }
 
     public String getAirlineString() {
-        if(this.getAirline() instanceof Alaska) {
+        if (this.getAirline() instanceof Alaska) {
             return "Alaska";
-        }
-        else if(this.getAirline() instanceof Delta) {
+        } else if (this.getAirline() instanceof Delta) {
             return "Delta";
-        }
-        else if(this.getAirline() instanceof Southwest) {
+        } else if (this.getAirline() instanceof Southwest) {
             return "Southwest";
+        } else {
+            return null;
         }
-        else {return null;}
     }
 
     public String toString() {
