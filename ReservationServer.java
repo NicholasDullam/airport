@@ -72,7 +72,9 @@ public class ReservationServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        ArrayList<String> file = new ArrayList<String>();
+
+        file = new ArrayList<String>();
+        
         try {
             String line = "";
             while (true) {
@@ -192,6 +194,14 @@ public class ReservationServer {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Project 5 - Airport Manager
+     *
+     * @author Nicholas Dullam ndullam
+     * @author Michael Taylor taylo874
+     * @version 11-20-19
+     */
 
     private class Handler extends Thread {
         private Socket clientSocket;

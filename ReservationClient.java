@@ -42,13 +42,13 @@ public class ReservationClient extends JFrame {
                     while (hostName.equals("")) {
                         hostName = inputHostName();
                         if (hostName.equals(JOptionPane.CANCEL_OPTION)) {
-                            System.exit(0);
+                            return;
                         }
                     }
                     while (portNum.equals("")) {
                         portNum = inputPortNum();
                         if (portNum.equals(JOptionPane.CANCEL_OPTION)) {
-                            System.exit(0);
+                            return;
                         }
                     }
 
@@ -110,7 +110,7 @@ public class ReservationClient extends JFrame {
             frame.setVisible(false);
         });
         exitButton.addActionListener(e -> {
-            System.exit(0);
+            frame.dispose();
         });
         panel.add(exitButton);
         panel.add(bookFlightButton);
@@ -138,7 +138,7 @@ public class ReservationClient extends JFrame {
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
-            System.exit(0);
+            frame.dispose();
         });
 
         JButton bookFlightButton = new JButton("Yes, I want to book a Flight.");
@@ -195,7 +195,7 @@ public class ReservationClient extends JFrame {
 
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
-            System.exit(0);
+            frame.dispose();
         });
 
         JButton chooseButton = new JButton("<html><div style='text-align: center;'>Choose this flight" +
@@ -318,7 +318,7 @@ public class ReservationClient extends JFrame {
 
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
-            System.exit(0);
+            frame.dispose();
         });
         JButton yesButton = new JButton("Yes, I want this flight.");
         yesButton.addActionListener(e -> {
@@ -345,7 +345,7 @@ public class ReservationClient extends JFrame {
 
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
-            System.exit(0);
+            frame.dispose();
         });
 
         Font font1 = new Font("SansSerif", Font.BOLD, 20);
@@ -502,15 +502,8 @@ public class ReservationClient extends JFrame {
                 "select the \"No\" button.</html>";
         choice = JOptionPane.showConfirmDialog(null, message, "Confirm Info",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-        if (choice == JOptionPane.NO_OPTION) {
-            return false;
-        }
-        if (choice == JOptionPane.YES_OPTION) {
-            return true;
-        } else {
-            return true;
-        }
 
+        return !(choice == JOptionPane.NO_OPTION);
     }
 
     public static void flightData(Passenger x) {
@@ -526,7 +519,7 @@ public class ReservationClient extends JFrame {
 
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(e -> {
-            System.exit(0);
+            frame.dispose();
         });
         JButton refreshButton = new JButton("Refresh Flight Status");
         refreshButton.addActionListener(e -> {
