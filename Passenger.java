@@ -1,12 +1,11 @@
 import java.io.Serializable;
 
 /**
- *  Project 5 - Airport Manager
+ * Project 5 - Airport Manager
  *
- *  @author Nicholas Dullam ndullam
- *
- *  @version 11-20-19
- *
+ * @author Nicholas Dullam ndullam
+ * @author Michael Taylor taylo874
+ * @version 11-20-19
  */
 
 public class Passenger implements Serializable {
@@ -55,9 +54,9 @@ public class Passenger implements Serializable {
         this.age = age;
     }
 
-    /*public void setBoardingPass(Airline airline) {
+    public void setBoardingPass(Airline airline) {
         this.boardingPass = new BoardingPass(this, airline);
-    }*/
+    }
 
     public void setBoardingPass(BoardingPass boardingPass) {
         this.boardingPass = boardingPass;
