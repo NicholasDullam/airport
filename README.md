@@ -3,11 +3,11 @@
 ### Getting started
 To compile and run the client run...
 ```
-javac
-java
+javac ReservationClient.java
+java ReservationClient
 ```
 To compile and run the server run...
 ```
-javac
-java
+javac ReservationServer.java
+java ReservationServer
 ```
